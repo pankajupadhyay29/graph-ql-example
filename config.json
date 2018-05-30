@@ -1,0 +1,7 @@
+{
+  "db": {
+    "url":"cluster0-kbnsv.mongodb.net/test",
+    "username": "<add your user name>",
+    "password": "<add your password>"
+  }
+}

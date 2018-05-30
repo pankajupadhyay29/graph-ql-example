@@ -1,0 +1,30 @@
+{
+  "name": "graph-ql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write ./**/*.js",
+    "start": "nodemon server --inspect",
+    "pre-commit": "npm run format"
+  },
+  "pre-commit": [
+    "pre-commit"
+  ],
+  "author": "pankajupadhyay29@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.16.3",
+    "express-graphql": "^0.6.12",
+    "faker": "^4.1.0",
+    "graphql": "^0.13.2",
+    "mongodb": "^3.1.0-beta4",
+    "mongoose": "^5.1.2",
+    "validator": "^10.2.0"
+  },
+  "devDependencies": {
+    "prettier": "1.13.0"
+  }
+}
