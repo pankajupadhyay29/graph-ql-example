@@ -31,7 +31,7 @@ const userMutations = {
       if (!isEmail(input.email)) {
         throw new Error('The email is not in a valid format')
       }
-      const existingUser = await userMode.getUserByEmail(input.email)
+      const existingUser = await userModel.getUserByEmail(input.email);
 
       if (existingUser) {
         throw new Error('The email ${input.email} is already used')

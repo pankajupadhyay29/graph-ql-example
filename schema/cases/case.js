@@ -1,8 +1,11 @@
-const { GraphQLList, GraphQLNonNull } = require('graphql')
+const { GraphQLList, GraphQLID, GraphQLNonNull } = require('graphql')
 const isEmail = require('validator/lib/isEmail')
-const caseModel = require('../../models/case')
+const { PubSub, withFilter } = require('graphql-subscriptions')
 
+const caseModel = require('../../models/case')
 const { CaseType, CaseInputType } = require('./caseTypes')
+
+const pubsub = new PubSub()
 
 const caseQueries = {
   cases: {
@@ -14,8 +17,8 @@ const caseQueries = {
         })
       )
       return cases
-    },
-  },
+    }
+  }
 }
 
 const caseMutations = {
@@ -23,8 +26,8 @@ const caseMutations = {
     type: CaseType,
     args: {
       input: {
-        type: new GraphQLNonNull(CaseInputType),
-      },
+        type: new GraphQLNonNull(CaseInputType)
+      }
     },
     resolve: async (rootValue, { input }) => {
       const result = await new Promise(resolve => {
@@ -35,21 +38,30 @@ const caseMutations = {
             status: input.status,
             department: input.department,
             reporter: input.reporter,
-            assignee: input.assignee,
+            assignee: input.assignee
           }),
           (err, newCase) => {
-            if (err) throw err
-
+            pubsub.publish('caseAdded', { caseAdded: newCase })
             resolve(newCase)
           }
         )
       })
       return result
-    },
-  },
+    }
+  }
+}
+
+// pubsub.subscribe('caseAdded', console.log)
+
+const caseSubscription = {
+  caseAdded: {
+    type: CaseType,
+    subscribe: () => pubsub.asyncIterator('caseAdded')
+  }
 }
 
 module.exports = {
   caseQueries,
   caseMutations,
+  caseSubscription
 }

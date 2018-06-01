@@ -2,6 +2,13 @@ const express = require('express')
 const graphqlHTTP = require('express-graphql')
 const mongo = require('mongodb')
 const mongoose = require('mongoose')
+const { execute, subscribe } = require('graphql')
+const { createServer } = require('http')
+const { SubscriptionServer } = require('subscriptions-transport-ws')
+const { graphqlExpress, graphiqlExpress } = require('graphql-server-express')
+
+const cors = require('cors')
+const bodyParser = require('body-parser')
 
 const config = require('./config')
 const schema = require('./schema/schema')
@@ -14,19 +21,43 @@ mongoose.connect(
   { autoIndex: false }
 )
 
-app.use(
+const PORT = 3000
+const server = express()
+
+server.use('*', cors({ origin: 'http://localhost:{PORT}' }))
+
+server.use(
   '/graphql',
-  graphqlHTTP({
-    schema,
-    graphiql: !prod,
+  bodyParser.json(),
+  graphqlExpress({
+    schema
   })
 )
 
-app.use('/', (req, res) => {
-  res.json('Go to /graphql to test your queries and mutations!')
-})
+server.use(
+  '/graphiql',
+  graphiqlExpress({
+    endpointURL: '/graphql',
+    subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions`
+  })
+)
 
-const server = app.listen(process.env.PORT || 3000, () => {
-  const { port } = server.address()
-  console.info(`\n\nExpress listen at http://localhost:${port} \n`)
+// We wrap the express server so that we can attach the WebSocket for subscriptions
+const ws = createServer(server)
+
+ws.listen(PORT, () => {
+  console.log(`GraphQL Server is now running on http://localhost:${PORT}`)
+
+  // Set up the WebSocket for handling GraphQL subscriptions
+  new SubscriptionServer(
+    {
+      execute,
+      subscribe,
+      schema
+    },
+    {
+      server: ws,
+      path: '/subscriptions'
+    }
+  )
 })

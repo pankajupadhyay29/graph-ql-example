@@ -1,4 +1,10 @@
-const { GraphQLString, GraphQLID, GraphQLInputObjectType, GraphQLObjectType, GraphQLEnumType } = require('graphql')
+const {
+  GraphQLString,
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLObjectType,
+  GraphQLEnumType
+} = require('graphql')
 
 const { UserType } = require('../users/userTypes')
 const userModel = require('../../models/user')
@@ -10,8 +16,8 @@ const StatusType = new GraphQLEnumType({
     InProgress: { value: 1 },
     OnHold: { value: 2 },
     Resolved: { value: 3 },
-    Closed: { value: 4 },
-  },
+    Closed: { value: 4 }
+  }
 })
 
 const CaseType = new GraphQLObjectType({
@@ -19,16 +25,16 @@ const CaseType = new GraphQLObjectType({
   description: 'Case type definition',
   fields: () => ({
     id: {
-      type: GraphQLID,
+      type: GraphQLID
     },
     title: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     department: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     reporter: {
       type: UserType,
@@ -38,7 +44,7 @@ const CaseType = new GraphQLObjectType({
         })
 
         return reporter
-      },
+      }
     },
     assignee: {
       type: UserType,
@@ -50,9 +56,9 @@ const CaseType = new GraphQLObjectType({
         })
 
         return assignee
-      },
-    },
-  }),
+      }
+    }
+  })
 })
 
 const CaseInputType = new GraphQLInputObjectType({
@@ -60,27 +66,27 @@ const CaseInputType = new GraphQLInputObjectType({
   description: 'Case payload definition',
   fields: () => ({
     title: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     status: {
-      type: StatusType,
+      type: StatusType
     },
     department: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     reporter: {
-      type: GraphQLID,
+      type: GraphQLID
     },
     assignee: {
-      type: GraphQLID,
-    },
-  }),
+      type: GraphQLID
+    }
+  })
 })
 
 module.exports = {
   CaseType,
-  CaseInputType,
+  CaseInputType
 }

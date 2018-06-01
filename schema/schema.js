@@ -1,7 +1,7 @@
 const { GraphQLSchema, GraphQLObjectType } = require('graphql')
 
 const { userQueries, userMutations } = require('./users/user')
-const { caseQueries, caseMutations } = require('./cases/case')
+const { caseQueries, caseMutations, caseSubscription } = require('./cases/case')
 
 module.exports = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -16,6 +16,12 @@ module.exports = new GraphQLSchema({
     fields: () => ({
       ...userMutations,
       ...caseMutations,
+    }),
+  }),
+  subscription: new GraphQLObjectType({
+    name: 'Subscription',
+    fields: () => ({
+      ...caseSubscription,
     }),
   }),
 })
