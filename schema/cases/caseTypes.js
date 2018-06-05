@@ -1,3 +1,4 @@
+const fetch = require('node-fetch')
 const {
   GraphQLString,
   GraphQLID,
@@ -9,6 +10,7 @@ const {
 
 const { UserType } = require('../users/userTypes')
 const userModel = require('../../models/user')
+const { DepartmentType } = require('../department/department')
 
 const StatusType = new GraphQLEnumType({
   name: 'Status',
@@ -35,7 +37,15 @@ const CaseType = new GraphQLObjectType({
       type: GraphQLString,
     },
     department: {
-      type: GraphQLString,
+      type: DepartmentType,
+      resolve: ({ department }) => {
+        return fetch(`http://localhost:5555/api/departments/${department}`)
+          .then(res => res.json())
+          .then(data => {
+            console.log(data)
+            return data
+          })
+      },
     },
     reporter: {
       type: UserType,
