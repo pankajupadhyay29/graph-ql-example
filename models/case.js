@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const util = require('util')
 
 // User Schema
 const CaseSchema = mongoose.Schema({
@@ -25,21 +26,18 @@ const CaseSchema = mongoose.Schema({
 
 const CaseModel = (module.exports = mongoose.model('Issues', CaseSchema))
 
-module.exports.createCase = function(newCase, callback) {
-  newCase.save(callback)
+module.exports.createCase = function(newCase) {
+  return util.promisify(newCase.save.bind(newCase))()
 }
 
-module.exports.getCaseByTitle = function(title, callback) {
-  CaseModel.findOne({ title }, callback)
+module.exports.getCaseByTitle = function(title) {
+  return util.promisify(CaseModel.findOne.bind(CaseModel))({ title })
 }
 
-module.exports.getCaseById = function(id, callback) {
-  CaseModel.findById(id, callback)
+module.exports.getCaseById = function(id) {
+  return util.promisify(CaseModel.findById.bind(CaseModel))(id)
 }
 
 module.exports.getAll = function(callback) {
-  CaseModel.find({}, function(err, cases) {
-    if (err) throw err
-    callback(null, cases)
-  })
+  return util.promisify(CaseModel.find.bind(CaseModel))({})
 }
