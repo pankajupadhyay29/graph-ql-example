@@ -2,6 +2,7 @@ const express = require('express')
 const graphqlHTTP = require('express-graphql')
 const mongo = require('mongodb')
 const mongoose = require('mongoose')
+const _ = require('lodash')
 
 const config = require('./config')
 const schema = require('./schema/schema')
@@ -9,8 +10,11 @@ const schema = require('./schema/schema')
 const app = express()
 const prod = process.env.NODE_ENV === 'prod'
 
+const credentials = _.compact([config.db.username, config.db.username]).join(':')
+
+const connectionStr = _.isEmpty(credentials) ? config.db.url : `${credentials}@${config.db.url}`
 mongoose.connect(
-  `mongodb+srv://${config.db.username}:${config.db.username}@${config.db.url}?retryWrites=true`,
+  `mongodb+srv://${connectionStr}?retryWrites=true`,
   { autoIndex: false }
 )
 

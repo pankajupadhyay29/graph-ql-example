@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const DataLoader = require('dataloader')
 const {
   GraphQLString,
   GraphQLID,
@@ -11,6 +12,15 @@ const {
 const { UserType } = require('../users/userTypes')
 const userModel = require('../../models/user')
 const { DepartmentType } = require('../department/department')
+
+const getDepartmentByIds = departments => {
+  return Promise.all(
+    departments.map(department => {
+      return fetch(`http://localhost:5555/api/departments/${department}`).then(res => res.json())
+    })
+  )
+}
+const departmentLoader = new DataLoader(getDepartmentByIds)
 
 const StatusType = new GraphQLEnumType({
   name: 'Status',
@@ -39,12 +49,7 @@ const CaseType = new GraphQLObjectType({
     department: {
       type: DepartmentType,
       resolve: ({ department }) => {
-        return fetch(`http://localhost:5555/api/departments/${department}`)
-          .then(res => res.json())
-          .then(data => {
-            console.log(data)
-            return data
-          })
+        return departmentLoader.load(department)
       },
     },
     reporter: {
