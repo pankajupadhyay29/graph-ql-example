@@ -1,4 +1,4 @@
-node('node') {
+node {
     deleteDir()
     currentBuild.result = "SUCCESS"
 
