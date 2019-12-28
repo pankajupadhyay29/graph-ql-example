@@ -1,4 +1,11 @@
-const { GraphQLString, GraphQLID, GraphQLInputObjectType, GraphQLObjectType, GraphQLEnumType } = require('graphql')
+const {
+  GraphQLString,
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLEnumType,
+} = require('graphql')
 
 const { UserType } = require('../users/userTypes')
 const userModel = require('../../models/user')
@@ -60,7 +67,7 @@ const CaseInputType = new GraphQLInputObjectType({
   description: 'Case payload definition',
   fields: () => ({
     title: {
-      type: GraphQLString,
+      type: new GraphQLNonNull(GraphQLString),
     },
     description: {
       type: GraphQLString,
